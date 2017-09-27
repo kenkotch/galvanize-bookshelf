@@ -8,27 +8,29 @@ const router = express.Router()
 
 // C
 router.post('/books', (req, res, next) => {
-
   knex('books')
   .insert({
-    id: req.body.id,
     title: req.body.title,
     author: req.body.author,
     genre: req.body.genre,
     description: req.body.description,
-    cover_url: req.body.cover_url,
-    created_at: req.body.created_at,
-    updated_at: req.body.updated_at
-   }, 'id')
-  .then((items) => {
-    if (!req.body.id || !req.body.title || !req.body.author || !req.body.genre || !req.body.description || !req.body.cover_url || !req.body.created_at || !req.body.updated_at) {
-      res.sendStatus(400)
+    cover_url: req.body.coverUrl,
+  }, '*')
+  .then((book) => {
+    const newObj = {
+      id: book[0].id,
+      title: book[0].title,
+      author: book[0].author,
+      genre: book[0].genre,
+      description: book[0].description,
+      coverUrl: book[0].cover_url
     }
-    res.setHeader('Content-Type', 'application/json')
-    res.send(JSON.stringify(items[0]))
+    res.send(newObj)
   })
   .catch((err) => next(err))
 })
+// })
+
 
 // R
 router.get('/books/:id', (req, res, next) => {
@@ -83,9 +85,6 @@ router.get('/books', (req, res, next) => {
     })
     .catch((err) => next(err))
 })
-
-
-
 
 
 module.exports = router
