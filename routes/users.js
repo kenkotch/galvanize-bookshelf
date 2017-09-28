@@ -23,7 +23,6 @@ router.post('/users', (req, res, next) => {
       firstName: user[0].first_name,
       lastName: user[0].last_name,
       email: user[0].email,
-      // hashedPassword: user[0].hashed_password
     }
     res.send(newObj)
   })
