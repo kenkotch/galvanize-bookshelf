@@ -58,8 +58,10 @@ router.get('/books/:id', (req, res, next) => {
 
 // U
 router.patch('/books/:id', (req, res, next) => {
+  const id = +req.params.id
+  let newObj
+
   knex('books')
-    .where('id', req.params.id)
     .update({
       title: req.body.title,
       author: req.body.author,
@@ -67,12 +69,19 @@ router.patch('/books/:id', (req, res, next) => {
       description: req.body.description,
       cover_url: req.body.coverUrl
     }, '*')
-    .then((rowsAffected) => {
-      if (rowsAffected !== 1) {
-        return res.sendStatus(404)
+    .where('id', id)
+    .then((book) => {
+      newObj = {
+        id: book[0].id,
+        title: book[0].title,
+        author: book[0].author,
+        genre: book[0].genre,
+        description: book[0].description,
+        coverUrl: book[0].cover_url
       }
-
-      res.sendStatus(200)
+      res.setHeader('Content-Type', 'application/json')
+      res.status(200)
+      res.send(newObj)
     })
     .catch((err) => {
       next(err)
