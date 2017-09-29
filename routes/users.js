@@ -9,13 +9,13 @@ router.post('/users', (req, res, next) => {
   const thePassword = req.body.password
 
   bcrypt.hash(thePassword, 12)
-    .then((result) => {
+    .then((hash_pass) => {
     return knex('users')
     .insert({
       first_name: req.body.firstName,
       last_name: req.body.lastName,
       email: req.body.email,
-      hashed_password: result
+      hashed_password: hash_pass
     }, '*')
   .then((user) => {
     const newObj = {
@@ -27,7 +27,7 @@ router.post('/users', (req, res, next) => {
     res.send(newObj)
   })
   .catch((err) => next(err))
-})
+  })
 })
 
 module.exports = router
