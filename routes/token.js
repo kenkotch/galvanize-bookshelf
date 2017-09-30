@@ -2,17 +2,16 @@
 
 const express = require('express')
 const jwt = require('jsonwebtoken')
-const cookie = require('cookie-parser')
 const bcrypt = require('bcrypt')
-
-const JWT = process.env.JWT_KEY
-const router = express.Router()
+const knex = require('../knex')
 require('dotenv').config()
 
-router.get('/token', (req, res, next) => {
-  jwt.verify(req.cookies.token, JWT, (err, payload) => {
+const JWT_KEY = process.env.JWT_KEY
+const router = express.Router()
+
+router.get('/token', (req, res) => {
+  jwt.verify(req.cookies.token, JWT_KEY, (err, payload) => {
     if (err) {
-      res.status(200)
       res.send(false)
     } else {
       res.send(true)
@@ -21,75 +20,47 @@ router.get('/token', (req, res, next) => {
 })
 
 router.post('/token', (req, res, next) => {
-// if password
-// bcrypt.compare (async)
-  // .then(result)
-  // if true(200, return obj) set cookie-
-  // user = {name: "Bootsy", visits: 0}
-  //   }
-  //
-  //   user.visits++
-  //   let token = jwt.sign(user, SECRET);
-  //
-  //
-  //   // set a cookie
-  //   res.cookie("token", token)
+  knex('users')
+    .where('email', req.body.email)
+    .first()
+    .returning('*') // returning email, f_name, l_name, pass, id, created at, updated at
+    .then((user) => {
+      if (!user) {
+        res.setHeader('Content-Type', 'text/plain')
+        res.status(400)
+        res.send('Bad email or password')
+      } else { // we know email exists!
+      // does password match hashed password in db
+        bcrypt.compare(req.body.password, user.hashed_password, (err, match) => {
+          if (match) {
+            const token = jwt.sign({
+              userId: user.id
+            }, JWT_KEY)
 
+            let newObj = {
+              id: user.id,
+              email: user.email,
+              firstName: user.first_name,
+              lastName: user.last_name
+            }
 
-
-
-
-  // else (400)
-
-  // verified, so create token in cookie   .then - return stuff
-
+            res.cookie('token', token, { httpOnly: true })
+            res.status(200)
+            res.setHeader('Content-Type', 'application/json')
+            res.send(newObj)
+          } else {
+            res.setHeader('Content-Type', 'text/plain')
+            res.status(400)
+            res.send('Bad email or password')
+          }
+        })
+      }
+    })
 })
 
-
-
-
-// require:
-//  -dont forget to require the thing you need
-//
-// router.GET{
-//
-// //verify the token that is sent from the browser( in a cookie)
-// // "request assumes a token was created by the previous POST /token request" - readme.md
-// takes 2 params-
-//
-// if there is an err, no or bad token
-// response is false
-//
-// else if there is a token that is verified
-// response is true
-// }
-//
-// router.POST{
-//
-// // verify the req.body is valid
-// is there an email?
-// is there a password?
-//
-// // if the req.body was valid then use the email to find the user in the DB
-//
-// //verify the user's password is correct, if so...
-//
-// // create a token that contains the user.id
-//
-// // set a cookie that contains the token
-//
-// // send the user's information in the response to the POST
-// - do not send back password of the user.
-// }
-//
-// router.DELETE{
-//
-// delete the cookie
-// }
-
-
-
-
-
+router.delete('/token', (req, res) => {
+  res.clearCookie('token')
+  res.sendStatus(200)
+})
 
 module.exports = router
