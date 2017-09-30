@@ -1,5 +1,4 @@
-
-exports.up = function(knex, Promise) {
+exports.up = (knex, Promise) => {
   return knex.schema.createTable('users', (table) => {
     table.increments().primary()
     table.varchar('first_name').notNullable().defaultTo('')
@@ -7,10 +6,9 @@ exports.up = function(knex, Promise) {
     table.varchar('email').notNullable().unique()
     table.specificType('hashed_password', 'char(60)').notNullable()
     table.timestamps(true, true)
-
   })
 }
 
-exports.down = function(knex, Promise) {
+exports.down = (knex, Promise) => {
   return knex.schema.dropTable('users')
 }

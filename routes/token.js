@@ -5,7 +5,6 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const knex = require('../knex')
 require('dotenv').config()
-
 const JWT_KEY = process.env.JWT_KEY
 const router = express.Router()
 
