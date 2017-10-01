@@ -61,7 +61,23 @@ router.get('/favorites/check', authorize, (req, res, next) => {
 
 // D
 router.delete('/favorites', authorize, (req, res, next) => {
-  
+  console.log(req.body.bookId)
+  knex('favorites')
+    .del()
+    .where('favorites.user_id', req.claim.userId)
+    .andWhere('favorites.book_id', req.body.bookId)
+    .then(() => {
+      const delObj = {
+        user_id: req.claim.userId,
+        book_id: req.body.bookId
+      }
+      res.setHeader('Content-Type', 'application/json')
+      res.status(200)
+      res.send(camelizeKeys(delObj))
+    })
+    .catch((err) => {
+      next(err)
+    })
 })
 
 // L
