@@ -61,7 +61,7 @@ router.get('/favorites/check', authorize, (req, res, next) => {
 
 // D
 router.delete('/favorites', authorize, (req, res, next) => {
-  console.log(req.body.bookId)
+  // console.log(req.body.bookId)
   knex('favorites')
     .del()
     .where('favorites.user_id', req.claim.userId)
