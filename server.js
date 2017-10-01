@@ -38,7 +38,7 @@ app.use((req, res, next) => {
     return next()
   }
 
-  res.sendStatus(406)
+  return res.sendStatus(406)
 })
 
 const books = require('./routes/books')

@@ -22,14 +22,29 @@ const authorize = (req, res, next) => {
 
 // C
 router.post('/favorites', authorize, (req, res, next) => {
+  const newFav = {
+    user_id: req.claim.userId,
+    book_id: req.body.bookId
+  }
 
+  knex('favorites')
+    .insert(newFav, '*')
+    .where('favorites.user_id', req.claim.userId)
+    .andWhere('favorites.book_id', req.query.bookId)
+    .then((fav) => {
+      delete newFav.created_at
+      delete newFav.updated_at
+      res.send(camelizeKeys(fav[0]))
+    })
 })
 
 // R
 router.get('/favorites/check', authorize, (req, res, next) => {
+  // console.log(req.query)
   knex('favorites')
-    // i dont understand the next 2 lines or why router.get doesnt need /favorites/check/:id
+    // from authorize above
     .where('favorites.user_id', req.claim.userId)
+    // query is built in express property
     .andWhere('favorites.book_id', req.query.bookId)
     .then((result) => {
       if (result.length) {
@@ -45,8 +60,8 @@ router.get('/favorites/check', authorize, (req, res, next) => {
 
 
 // D
-router.delete('/favorites', authorize, (req, res) => {
-
+router.delete('/favorites', authorize, (req, res, next) => {
+  
 })
 
 // L
