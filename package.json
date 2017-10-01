@@ -7,7 +7,7 @@
     "start": "node server.js",
     "knex": "knex",
     "heroku-postbuild": "knex migrate:rollback; knex migrate:latest; knex seed:run",
-    "nodemon": "node app.js",
+    "nodemon": "node server.js",
     "lint": "eslint  --ignore-pattern public/js/vendor",
     "nf": "nf start",
     "test": "mocha"
