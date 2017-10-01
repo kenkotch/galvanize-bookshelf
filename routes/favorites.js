@@ -24,6 +24,22 @@ const authorize = (req, res, next) => {
 
 
 // R
+router.get('/favorites/check', authorize, (req, res, next) => {
+  knex('favorites')
+    // i dont understand the next 2 lines or why router.get doesnt need /favorites/check/:id
+    .where('favorites.user_id', req.claim.userId)
+    .andWhere('favorites.book_id', req.query.bookId)
+    .then((result) => {
+      if (result.length) {
+        res.send(true)
+      } else {
+        res.send(false)
+      }
+    })
+    .catch((err) => {
+      next(err)
+    })
+})
 
 
 // D
