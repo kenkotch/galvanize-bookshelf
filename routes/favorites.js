@@ -21,7 +21,9 @@ const authorize = (req, res, next) => {
 }
 
 // C
+router.post('/favorites', authorize, (req, res, next) => {
 
+})
 
 // R
 router.get('/favorites/check', authorize, (req, res, next) => {
@@ -43,7 +45,9 @@ router.get('/favorites/check', authorize, (req, res, next) => {
 
 
 // D
+router.delete('/favorites', authorize, (req, res) => {
 
+})
 
 // L
 router.get('/favorites', authorize, (req, res, next) => {
@@ -55,14 +59,5 @@ router.get('/favorites', authorize, (req, res, next) => {
       res.send(favs)
     })
 })
-
-
-
-
-
-// .catch((err) => {
-//   next(err)
-// })
-// })
 
 module.exports = router
