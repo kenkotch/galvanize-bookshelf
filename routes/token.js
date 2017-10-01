@@ -1,10 +1,10 @@
 'use strict'
 
 const express = require('express')
-const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const knex = require('../knex')
 require('dotenv').config()
+const jwt = require('jsonwebtoken')
 const JWT_KEY = process.env.JWT_KEY
 const router = express.Router()
 
