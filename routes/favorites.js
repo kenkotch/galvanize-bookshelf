@@ -26,7 +26,6 @@ router.post('/favorites', authorize, (req, res, next) => {
     user_id: req.claim.userId,
     book_id: req.body.bookId
   }
-
   knex('favorites')
     .insert(newFav, '*')
     .where('favorites.user_id', req.claim.userId)

@@ -32,9 +32,7 @@ router.post('/token', (req, res, next) => {
       // does password match hashed password in db
         bcrypt.compare(req.body.password, user.hashed_password, (err, match) => {
           if (match) {
-            const token = jwt.sign({
-              userId: user.id
-            }, JWT_KEY)
+            const token = jwt.sign({ userId: user.id }, JWT_KEY)
 
             let newObj = {
               id: user.id,
@@ -59,7 +57,7 @@ router.post('/token', (req, res, next) => {
 
 router.delete('/token', (req, res) => {
   res.clearCookie('token')
-  res.sendStatus(200)
+  res.end()
 })
 
 module.exports = router
